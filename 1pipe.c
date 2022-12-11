@@ -26,22 +26,24 @@ int main()
     printf("The sum of arr : %d\n", sum);
     if (pid == 0)
     {
-        close(fd[0]);
+        // close(fd[0]);
         printf("in the child process\n");
+        usleep(2000000);
         if (write(fd[1], &sum, sizeof(sum)) == -1)
             return (3);
-        close(fd[1]);
+        // close(fd[1]);
     }
     else
     {
-        wait(NULL);
+        // wait(NULL);
         printf("in the parent process\n");
-        close(fd[1]);
+        // close(fd[1]);
         int sum_all;
+        // usleep(2000000);
         if (read(fd[0], &sum_child, sizeof(sum)) == -1)
             return (4);
-        if (read(fd[0], &sum_child, sizeof(sum)) == -1)
-            return (4);
+        // if (read(fd[0], &sum_child, sizeof(sum)) == -1)
+        //     return (4);
         sum_all = sum + sum_child;
         close(fd[0]);
         printf("The sum of all %d\n", sum_all);
