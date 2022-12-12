@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "../ft_pipex.h"
+
 int	ft_countword(char const *s, char c)
 {
 	int	i;
