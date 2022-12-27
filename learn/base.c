@@ -3,22 +3,13 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-int main(void)
+#include <unistd.h>
+ 
+int main(int a, char **b, char **c) 
 {
-	int n;
-	int pid = fork();
-	// fork();
-	if (pid == 0)
-		sleep(1);
-	else
-	{
-		n = 6;
-		// wait(NULL);
-	}
-	if (pid == 0)
-	{
-		printf("I'm Child  PID:%d, PPID:%d\n", getpid(), getppid());
-	}
-	else
-		printf("I'm Parent PID:%d, PPID:%d\n", getpid(), getppid());
+  char *binaryPath = "/bin/bash";
+  char *const args[] = {binaryPath, "-c", "echo ", "Visit $HOSTNAME:$PORT from your browser.", NULL};
+  char *const env[] = {"HOSTNAME=www.linuxhint.com", "PORT=8080", NULL};
+  execve(binaryPath, args, env);
+  return 0;
 }

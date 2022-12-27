@@ -22,7 +22,7 @@ void waitexample()
     for (i=0; i<5; i++)
     {
         pid_t cpid = waitpid(pid[i], &stat, 0);
-        if (WIFEXITED(stat))
+                
             printf("Child %d terminated with status: %d\n",
                    cpid, WEXITSTATUS(stat));
     }

@@ -2,28 +2,23 @@
 
 int main(void)
 {
-	int fd[2];
-	if (pipe(fd)) return(2);
-	int pid = fork();
-	if (pid == -1)
-		return (1);
-	if (pid == 0)
-	{
-		close(fd[0]);
-		int nb[10];
-		for (int i = 0; i < 10; i++)
-			nb[i] = (2 * i) % 10;
-		write(fd[1], nb, sizeof(int) * 10);
-	}
-	else
-	{
-		close(fd[1]);
-		int b[10];
-		usleep(5000);
-		read(fd[0], b, sizeof(int) * 10);
-		for (int j = 0; j < 10; j++)
-			printf("%d, ", b[j]);
-		printf("\n");
-		wait(NULL);
-	}
+	int tube[2];
+	pipe(tube);
+	printf("fd[0]:%d\n", tube[0]);
+	printf("fd[1]:%d\n", tube[1]);
+	int fd1 = open("file1.txt", O_RDWR);
+	int fd2 = open("file2.txt", O_RDWR);
+	printf("fd1:%d\n", fd1);
+	printf("fd2:%d\n", fd2);
+	dup2(fd1, fd2);
+	write(fd2, "Hello\n", 6);
+	write(fd1, "World\n", 6);
+	// write(1, "Hello\n", 6);
+	// int newfd = dup(1);
+	// printf("newfd:%d\n", newfd);
+	// write(5, "Hello\n", 6);
+	// int rd = open("file2.txt", O_WRONLY);
+	// printf("rd:%d\n", rd);
+	// dup2(rd, 1);
+	// write(1, str, 15);
 }
