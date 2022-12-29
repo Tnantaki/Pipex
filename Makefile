@@ -12,27 +12,29 @@
 
 FLAGS = -Wall -Werror -Wextra
 NAME = pipex
-SRCS = 
+
+LIBFT_SRCS = ft_strlen.c ft_strjoin.c ft_strjoinfree.c\
+			 ft_strtrim.c ft_split.c ft_putstr_fd.c
+LIBFT_PATH = libft/
+SRCS = ft_pipex.c ft_utils.c\
+	   $(addprefix $(LIBFT_PATH), $(LIBFT_SRCS))
 
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
-%o:%c
+%.o:%.c
 	gcc $(FLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
-	ar -rcs $(NAME) $(OBJS)
-
-bonus: $(NAME) $(BOBJS)
-	ar -rcs $(NAME) $(BOBJS)
+	gcc $(FLAGS) $(OBJS) -o $(NAME)
 
 clean:
-	rm -f $(OBJS) $(BOBJS)
+	rm -f $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: clean fclean all re bonus
+.PHONY: clean fclean all re

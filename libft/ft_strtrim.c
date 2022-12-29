@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-size_t	ft_front(char const *s1, char const *set)
+static size_t	ft_front(char *s1, char *set)
 {
 	size_t	i;
 	size_t	begin;
@@ -31,7 +31,7 @@ size_t	ft_front(char const *s1, char const *set)
 	return (begin);
 }
 
-size_t	ft_end(char const *s1, char const *set, size_t lens1, size_t be)
+static size_t	ft_end(char *s1, char *set, size_t lens1, size_t be)
 {
 	size_t	i;
 	size_t	last;
@@ -71,5 +71,7 @@ char	*ft_strtrim(char *s1, char *set)
 	while (i < lendst)
 		dst[i++] = s1[begin++];
 	dst[i] = '\0';
+	if (s1)
+		free (s1);
 	return (dst);
 }
