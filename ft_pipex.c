@@ -24,7 +24,11 @@ static void ft_execve(char **path, char **cmd_opt, char **envp)
 		if (access(cmd, F_OK) == 0)
 		{
 			ft_double_free(path);
-			execve(cmd, cmd_opt, envp);
+			if (execve(cmd, cmd_opt, envp) == -1)
+			{
+				free (cmd);
+				break;
+			}
 		}
 		free (cmd);
 		i++;
@@ -59,7 +63,7 @@ static void ft_parent(char **path, char **av, int *fd, char **envp)
 	char	**cmd_opt;
 	int		outfile;
 
-	outfile = open(av[4], O_RDWR | O_CREAT | O_TRUNC, 0777);
+	outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (outfile == -1)
 	{
 		ft_double_free(path);
@@ -88,6 +92,7 @@ static char	**ft_findpath(char **envp)
 			break;
 		i++;
 	}
+	// printf("%s \n", envp[i]);
 	cmd_path = ft_split(envp[i], ':');
 	cmd_path[0] = ft_strtrim(cmd_path[0], "PATH=");
 	i = 0;
@@ -105,7 +110,8 @@ int main(int ac, char **av, char **envp)
 	char **path;
 	int	fd[2];
 	int pid1;
-	//int stat;
+	// int child_stat;
+	// int err_stat;
 
 	if (ac != 5)
 		ft_prterr(ARG_ERR, NULL);
@@ -117,10 +123,14 @@ int main(int ac, char **av, char **envp)
 		ft_prterr(FORK_ERR, NULL);
 	if (pid1 == 0)
 		ft_child(path, av, fd, envp);
-	wait(NULL);
+	// waitpid(pid1, &child_stat, WNOHANG);
+	// if (WIFEXITED(child_stat))
+	// 	err_stat = WEXITSTATUS(child_stat);
+	// errno = err_stat;
+	// wait(NULL);
 	ft_parent(path, av, fd, envp);
 	//waitpid(pid1, NULL, 0);
 	//waitpid(pid2, NULL, 0);
-	//ft_double_free(path);
+	ft_double_free(path);
 	return (0);
 }
