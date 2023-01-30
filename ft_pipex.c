@@ -6,82 +6,98 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 10:53:10 by tnantaki          #+#    #+#             */
-/*   Updated: 2022/12/12 11:30:33 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/01/30 23:56:00 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void ft_execve(char **path, char **cmd_opt, char **envp)
+static char	*ft_fcmd(char **path, char **cmd, char *av)
 {
-	char	*cmd;
+	char	*fcmd;
 	int		i;
 
 	i = 0;
+	if (access(cmd[0], F_OK) == 0)
+	{
+		fcmd = ft_strjoin("", cmd[0]);
+		ft_double_free(path);
+		return (fcmd);
+	}
 	while (path[i])
 	{
-		cmd = ft_strjoin(path[i], cmd_opt[0]);
-		if (access(cmd, F_OK) == 0)
+		fcmd = ft_strjoin(path[i], cmd[0]);
+		if (access(fcmd, F_OK) == 0)
 		{
 			ft_double_free(path);
-			if (execve(cmd, cmd_opt, envp) == -1)
-			{
-				free (cmd);
-				break;
-			}
+			return (fcmd);
 		}
-		free (cmd);
+		free (fcmd);
 		i++;
 	}
-	ft_double_free(cmd_opt);
+	ft_double_free(cmd);
 	ft_double_free(path);
+	ft_prterr(COM_ERR, av);
+	return (NULL);
 }
 
-static void ft_child(char **path, char **av, int *fd, char **envp)
+static void	ft_child(char **path, char **av, int *fd_pipe, char **envp)
 {
-	char	**cmd_opt;
-	int		infile;
+	char	*fcmd;
+	char	**cmd;
+	int		fd_in;
 
-	infile = open (av[1], O_RDONLY);
-	if (infile == -1)
+	fd_in = open (av[1], O_RDONLY);
+	if (fd_in == -1)
 	{
 		ft_double_free(path);
 		ft_prterr(NO_FILE, av[1]);
 	}
-	cmd_opt = ft_split(av[2], ' ');
-	dup2(infile, STDIN_FILENO);
-	dup2(fd[1], STDOUT_FILENO);
-	close(fd[1]);
-	close(fd[0]);
-	close(infile);
-	ft_execve(path, cmd_opt, envp);
-	ft_prterr(COM_ERR, av[2]);
+	dup2(fd_in, STDIN_FILENO);
+	dup2(fd_pipe[1], STDOUT_FILENO);
+	close(fd_pipe[1]);
+	close(fd_pipe[0]);
+	close(fd_in);
+	cmd = ft_split(av[2], ' ');
+	fcmd = ft_fcmd(path, cmd, av[2]);
+	if (execve(fcmd, cmd, envp) == -1)
+	{
+		free(fcmd);
+		ft_double_free(cmd);
+		exit (errno);
+	}
 }
 
-static void ft_parent(char **path, char **av, int *fd, char **envp)
+static void	ft_parent(char **path, char **av, int *fd_pipe, char **envp)
 {
-	char	**cmd_opt;
-	int		outfile;
+	char	*fcmd;
+	char	**cmd;
+	int		fd_out;
 
-	outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	if (outfile == -1)
+	fd_out = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (fd_out == -1)
 	{
 		ft_double_free(path);
 		ft_prterr(NO_FILE, av[4]);
 	}
-	cmd_opt = ft_split(av[3], ' ');
-	dup2(fd[0], STDIN_FILENO);
-	dup2(outfile, STDOUT_FILENO);
-	close(outfile);
-	close(fd[1]);
-	close(fd[0]);
-	ft_execve(path, cmd_opt, envp);
-	ft_prterr(COM_ERR, av[3]);
+	dup2(fd_pipe[0], STDIN_FILENO);
+	dup2(fd_out, STDOUT_FILENO);
+	close(fd_out);
+	close(fd_pipe[1]);
+	close(fd_pipe[0]);
+	cmd = ft_split(av[3], ' ');
+	fcmd = ft_fcmd(path, cmd, av[3]);
+	if (execve(fcmd, cmd, envp) == -1)
+	{
+		free(fcmd);
+		ft_double_free(cmd);
+		exit (errno);
+	}
 }
 
 static char	**ft_findpath(char **envp)
 {
-	char **cmd_path;
+	char	**path;
 	int		i;
 
 	i = 0;
@@ -89,48 +105,36 @@ static char	**ft_findpath(char **envp)
 	{
 		if (envp[i][0] == 'P' && envp[i][1] == 'A'
 		&& envp[i][2] == 'T' && envp[i][3] == 'H')
-			break;
+			break ;
 		i++;
 	}
-	// printf("%s \n", envp[i]);
-	cmd_path = ft_split(envp[i], ':');
-	cmd_path[0] = ft_strtrim(cmd_path[0], "PATH=");
+	path = ft_split(ft_strtrim(envp[i], "PATH="), ':');
 	i = 0;
-	while (cmd_path[i])
+	while (path[i])
 	{
-		cmd_path[i] = ft_strjoinfree(cmd_path[i], "/");
+		path[i] = ft_strjoinfree(path[i], "/");
 		i++;
 	}
-	return (cmd_path);
+	return (path);
 }
 
-
-int main(int ac, char **av, char **envp)
+int	main(int ac, char **av, char **envp)
 {
-	char **path;
-	int	fd[2];
-	int pid1;
-	// int child_stat;
-	// int err_stat;
+	char	**path;
+	int		fd_pipe[2];
+	int		pid;
 
 	if (ac != 5)
 		ft_prterr(ARG_ERR, NULL);
-	if (pipe(fd) == -1)
-		ft_prterr(PIPE_ERR, NULL);
 	path = ft_findpath(envp);
-	pid1 = fork();
-	if (pid1 == -1)
+	if (pipe(fd_pipe) == -1)
+		ft_prterr(PIPE_ERR, NULL);
+	pid = fork();
+	if (pid == -1)
 		ft_prterr(FORK_ERR, NULL);
-	if (pid1 == 0)
-		ft_child(path, av, fd, envp);
-	// waitpid(pid1, &child_stat, WNOHANG);
-	// if (WIFEXITED(child_stat))
-	// 	err_stat = WEXITSTATUS(child_stat);
-	// errno = err_stat;
-	// wait(NULL);
-	ft_parent(path, av, fd, envp);
-	//waitpid(pid1, NULL, 0);
-	//waitpid(pid2, NULL, 0);
+	if (pid == 0)
+		ft_child(path, av, fd_pipe, envp);
+	ft_parent(path, av, fd_pipe, envp);
 	ft_double_free(path);
 	return (0);
 }

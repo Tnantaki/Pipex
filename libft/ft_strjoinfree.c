@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_strjoinfree.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tnantaki <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/08 11:08:15 by tnantaki          #+#    #+#             */
-/*   Updated: 2022/10/19 08:54:03 by tnantaki         ###   ########.fr       */
+/*   Created: 2023/01/30 13:54:35 by tnantaki          #+#    #+#             */
+/*   Updated: 2023/01/30 21:40:48 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*ft_strjoinfree(char *s1, char *s2)
 	if (!s2)
 		return (NULL);
 	lens1 = ft_strlen(s1);
-	lens2 = ft_strlen(s1);
+	lens2 = ft_strlen(s2);
 	dst = malloc(sizeof(char) * (lens1 + lens2 + 1));
 	if (!dst)
 		return (NULL);

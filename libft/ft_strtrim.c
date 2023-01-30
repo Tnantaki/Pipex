@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tnantaki <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/08 12:37:34 by tnantaki          #+#    #+#             */
-/*   Updated: 2022/09/17 15:56:39 by tnantaki         ###   ########.fr       */
+/*   Created: 2023/01/30 13:55:01 by tnantaki          #+#    #+#             */
+/*   Updated: 2023/01/30 19:47:03 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,5 @@ char	*ft_strtrim(char *s1, char *set)
 	while (i < lendst)
 		dst[i++] = s1[begin++];
 	dst[i] = '\0';
-	if (s1)
-		free (s1);
 	return (dst);
 }

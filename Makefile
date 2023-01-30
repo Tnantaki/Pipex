@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tnantaki <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/31 11:35:05 by tnantaki          #+#    #+#              #
-#    Updated: 2022/09/22 12:30:19 by tnantaki         ###   ########.fr        #
+#    Updated: 2023/01/30 20:44:44 by tnantaki         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ NAME = pipex
 CC = gcc
 
 FLAGS = -Wall -Werror -Wextra
+# FLAGS =
 
 RM = rm -f
 
