@@ -59,7 +59,7 @@ char	*ft_fcmd(char **path, char **cmd, char *av)
 	i = 0;
 	if (access(cmd[0], F_OK) == 0)
 		return (ft_double_free(path), fcmd = ft_strjoin("", cmd[0]));
-	if (strncmp(cmd[0], "/bin", 4) == 0 && access(cmd[0], F_OK) != 0)
+	if (ft_strncmp(cmd[0], "/bin", 4) == 0 && access(cmd[0], F_OK) != 0)
 	{
 		ft_double_free(cmd);
 		ft_double_free(path);

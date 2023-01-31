@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/31 10:42:30 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/01/31 14:28:54 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/01/31 16:37:02 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdlib.h>
 
 int		ft_strlen(const char *str);
+int		ft_strncmp(const char *s1, const char *s2, size_t n);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 char	*ft_strjoin(char *s1, char *s2);

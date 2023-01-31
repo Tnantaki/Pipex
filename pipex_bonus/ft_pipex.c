@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 10:53:10 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/01/31 15:05:17 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/01/31 16:29:03 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,10 +110,8 @@ int	main(int ac, char **av, char **envp)
 		ft_parent(mypipex.path, av, mypipex.fd_pipe, envp);
 	close(mypipex.fd_pipe[0]);
 	close(mypipex.fd_pipe[1]);
-	waitpid(mypipex.pid1, &mypipex.status, 0);
+	waitpid(mypipex.pid1, NULL, 0);
 	waitpid(mypipex.pid2, &mypipex.status, 0);
-	if (WEXITSTATUS(mypipex.status) != 0)
-		exit(WEXITSTATUS(mypipex.status));
 	ft_double_free(mypipex.path);
-	return (0);
+	return (WEXITSTATUS(mypipex.status));
 }
