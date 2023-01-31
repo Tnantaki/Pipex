@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 00:04:07 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/01/31 00:06:08 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/01/31 14:45:25 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,22 @@
 # define ARG_ERR 1
 # define PIPE_ERR 2
 # define FORK_ERR 3
-# define NO_FILE 4
-# define COM_ERR 5
+# define NO_INFILE 4
+# define NO_OUTFILE 5
+# define COM_ERR 6
+
+typedef struct s_pipe
+{
+	char	**path;
+	int		fd_pipe[2];
+	int		pid1;
+	int		pid2;
+	int		status;
+}	t_pipe;
 
 //utils
 void	ft_double_free(char **ptr);
-void	ft_prterr(int err, char *msg);
+void	ft_prterr(int err, char *msg, int errnum);
+char	*ft_fcmd(char **path, char **cmd, char *av);
 
 #endif

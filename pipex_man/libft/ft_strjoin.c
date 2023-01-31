@@ -1,26 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   libft.h                                            :+:      :+:    :+:   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/31 10:42:30 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/01/30 23:52:50 by tnantaki         ###   ########.fr       */
+/*   Created: 2022/09/08 11:08:15 by tnantaki          #+#    #+#             */
+/*   Updated: 2023/01/30 21:40:15 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
-# define LIBFT_H
+#include "libft.h"
 
-# include <unistd.h>
-# include <stdlib.h>
+char	*ft_strjoin(char *s1, char *s2)
+{
+	char	*dst;
+	int		lens1;
+	int		lens2;
+	int		i;
+	int		j;
 
-int		ft_strlen(const char *str);
-void	ft_putstr_fd(char *s, int fd);
-char	*ft_strjoin(char *s1, char *s2);
-char	*ft_strjoinfree(char *s1, char *s2);
-char	*ft_strtrim(char *s1, char *set);
-char	**ft_split(char *s1, char c);
-
-#endif
+	if (!s2)
+		return (NULL);
+	lens1 = ft_strlen(s1);
+	lens2 = ft_strlen(s2);
+	dst = malloc(sizeof(char) * (lens1 + lens2 + 1));
+	if (!dst)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (lens1--)
+		dst[i++] = s1[j++];
+	j = 0;
+	while (lens2--)
+		dst[i++] = s2[j++];
+	dst[i] = '\0';
+	return (dst);
+}

@@ -6,40 +6,11 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 10:53:10 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/01/30 23:56:00 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/01/31 15:05:17 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-static char	*ft_fcmd(char **path, char **cmd, char *av)
-{
-	char	*fcmd;
-	int		i;
-
-	i = 0;
-	if (access(cmd[0], F_OK) == 0)
-	{
-		fcmd = ft_strjoin("", cmd[0]);
-		ft_double_free(path);
-		return (fcmd);
-	}
-	while (path[i])
-	{
-		fcmd = ft_strjoin(path[i], cmd[0]);
-		if (access(fcmd, F_OK) == 0)
-		{
-			ft_double_free(path);
-			return (fcmd);
-		}
-		free (fcmd);
-		i++;
-	}
-	ft_double_free(cmd);
-	ft_double_free(path);
-	ft_prterr(COM_ERR, av);
-	return (NULL);
-}
 
 static void	ft_child(char **path, char **av, int *fd_pipe, char **envp)
 {
@@ -51,7 +22,7 @@ static void	ft_child(char **path, char **av, int *fd_pipe, char **envp)
 	if (fd_in == -1)
 	{
 		ft_double_free(path);
-		ft_prterr(NO_FILE, av[1]);
+		ft_prterr(NO_INFILE, av[1], errno);
 	}
 	dup2(fd_in, STDIN_FILENO);
 	dup2(fd_pipe[1], STDOUT_FILENO);
@@ -78,7 +49,7 @@ static void	ft_parent(char **path, char **av, int *fd_pipe, char **envp)
 	if (fd_out == -1)
 	{
 		ft_double_free(path);
-		ft_prterr(NO_FILE, av[4]);
+		ft_prterr(NO_OUTFILE, av[4], 1);
 	}
 	dup2(fd_pipe[0], STDIN_FILENO);
 	dup2(fd_out, STDOUT_FILENO);
@@ -120,21 +91,29 @@ static char	**ft_findpath(char **envp)
 
 int	main(int ac, char **av, char **envp)
 {
-	char	**path;
-	int		fd_pipe[2];
-	int		pid;
+	t_pipe	mypipex;
 
 	if (ac != 5)
-		ft_prterr(ARG_ERR, NULL);
-	path = ft_findpath(envp);
-	if (pipe(fd_pipe) == -1)
-		ft_prterr(PIPE_ERR, NULL);
-	pid = fork();
-	if (pid == -1)
-		ft_prterr(FORK_ERR, NULL);
-	if (pid == 0)
-		ft_child(path, av, fd_pipe, envp);
-	ft_parent(path, av, fd_pipe, envp);
-	ft_double_free(path);
+		ft_prterr(ARG_ERR, NULL, 1);
+	mypipex.path = ft_findpath(envp);
+	if (pipe(mypipex.fd_pipe) == -1)
+		ft_prterr(PIPE_ERR, NULL, errno);
+	mypipex.pid1 = fork();
+	if (mypipex.pid1 == -1)
+		ft_prterr(FORK_ERR, NULL, errno);
+	if (mypipex.pid1 == 0)
+		ft_child(mypipex.path, av, mypipex.fd_pipe, envp);
+	mypipex.pid2 = fork();
+	if (mypipex.pid2 == -1)
+		ft_prterr(FORK_ERR, NULL, errno);
+	if (mypipex.pid2 == 0)
+		ft_parent(mypipex.path, av, mypipex.fd_pipe, envp);
+	close(mypipex.fd_pipe[0]);
+	close(mypipex.fd_pipe[1]);
+	waitpid(mypipex.pid1, &mypipex.status, 0);
+	waitpid(mypipex.pid2, &mypipex.status, 0);
+	if (WEXITSTATUS(mypipex.status) != 0)
+		exit(WEXITSTATUS(mypipex.status));
+	ft_double_free(mypipex.path);
 	return (0);
 }
