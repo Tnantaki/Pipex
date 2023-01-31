@@ -6,13 +6,13 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 10:53:10 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/01/31 16:29:03 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/01/31 17:17:59 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	ft_child(char **path, char **av, int *fd_pipe, char **envp)
+static void	ft_child1(char **path, char **av, int *fd_pipe, char **envp)
 {
 	char	*fcmd;
 	char	**cmd;
@@ -39,7 +39,7 @@ static void	ft_child(char **path, char **av, int *fd_pipe, char **envp)
 	}
 }
 
-static void	ft_parent(char **path, char **av, int *fd_pipe, char **envp)
+static void	ft_child2(char **path, char **av, int *fd_pipe, char **envp)
 {
 	char	*fcmd;
 	char	**cmd;
@@ -102,12 +102,12 @@ int	main(int ac, char **av, char **envp)
 	if (mypipex.pid1 == -1)
 		ft_prterr(FORK_ERR, NULL, errno);
 	if (mypipex.pid1 == 0)
-		ft_child(mypipex.path, av, mypipex.fd_pipe, envp);
+		ft_child1(mypipex.path, av, mypipex.fd_pipe, envp);
 	mypipex.pid2 = fork();
 	if (mypipex.pid2 == -1)
 		ft_prterr(FORK_ERR, NULL, errno);
 	if (mypipex.pid2 == 0)
-		ft_parent(mypipex.path, av, mypipex.fd_pipe, envp);
+		ft_child2(mypipex.path, av, mypipex.fd_pipe, envp);
 	close(mypipex.fd_pipe[0]);
 	close(mypipex.fd_pipe[1]);
 	waitpid(mypipex.pid1, NULL, 0);
