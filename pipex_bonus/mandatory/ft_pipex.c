@@ -6,11 +6,11 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 10:53:10 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/01 19:08:45 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/01 19:06:33 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../includes/pipex.h"
 
 static void	ft_child1(char **path, char **av, int *fd_pipe, char **envp)
 {

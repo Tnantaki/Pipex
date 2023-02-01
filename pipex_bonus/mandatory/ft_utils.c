@@ -6,11 +6,11 @@
 /*   By: tnantaki <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 23:46:07 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/01 16:02:10 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/01/30 23:46:12 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../includes/pipex.h"
 
 void	ft_double_free(char **ptr)
 {

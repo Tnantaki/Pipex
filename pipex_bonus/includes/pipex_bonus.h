@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 00:04:07 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/01/31 14:45:25 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/02 00:15:15 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
-# include "libft/libft.h"
+# include "../libft/libft.h"
+# include "../get_next_line/get_next_line.h"
 # include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
@@ -32,6 +33,9 @@
 typedef struct s_pipe
 {
 	char	**path;
+	int		here_doc;
+	int		cmd_nb;
+	int		pipe_nb;
 	int		fd_pipe[2];
 	int		pid1;
 	int		pid2;
