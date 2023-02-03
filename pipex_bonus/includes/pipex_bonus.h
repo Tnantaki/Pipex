@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 00:04:07 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/02 18:22:23 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/03 16:04:53 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,27 @@ typedef struct s_pipe
 {
 	char	**path;
 	char	*tmp;
-	int		*fd_pipe;
 	int		here_doc;
 	int		len;
 	int		cmd_nb;
 	int		pipe_nb;
+	int		*fd_pipe;
 	int		fd_in;
+	int		fd_out;
+	int		fd_read;
+	int		fd_write;
+	int		i;
+	int		cmd_i;
 	int		pid;
 	int		pid1;
 	int		pid2;
 	int		status;
 }	t_pipe;
 
+//setup
+void	ft_check_arg(int ac, char **av, t_pipe *pipex);
+void	ft_open_infile(char **av, t_pipe *pipex);
+void	ft_findpath(char **envp, t_pipe *pipex);
 //utils
 void	ft_double_free(char **ptr);
 void	ft_prterr(int err, char *msg, int errnum);

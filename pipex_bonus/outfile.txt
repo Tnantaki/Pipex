@@ -1,10 +1,1 @@
-total 120
--rwxr-xr-x   1 tnantaki  2022_bangkok      0 Feb  1 17:56 3
--rw-r--r--   1 tnantaki  2022_bangkok   1798 Feb  1 18:47 Makefile
-drwxr-xr-x   4 tnantaki  2022_bangkok    136 Feb  1 00:12 bonus
-drwxr-xr-x   4 tnantaki  2022_bangkok    136 Feb  1 14:21 includes
--rw-r--r--   1 tnantaki  2022_bangkok    115 Jan 31 17:21 infile.txt
-drwxr-xr-x  19 tnantaki  2022_bangkok    646 Feb  1 18:48 libft
-drwxr-xr-x   6 tnantaki  2022_bangkok    204 Feb  1 18:48 mandatory
--rw-r--r--   1 tnantaki  2022_bangkok      0 Feb  1 18:49 outfile.txt
--rwxr-xr-x   1 tnantaki  2022_bangkok  50736 Feb  1 18:48 pipex
+      15
