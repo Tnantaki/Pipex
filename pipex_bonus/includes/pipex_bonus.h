@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 00:04:07 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/03 16:04:53 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/03 17:45:26 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ typedef struct s_pipe
 	int		i;
 	int		cmd_i;
 	int		pid;
-	int		pid1;
-	int		pid2;
+	int		pid1;// still not use
+	int		pid2;//still not use
 	int		status;
 }	t_pipe;
 
@@ -63,5 +63,9 @@ char	*ft_fcmd(char **path, char **cmd, char *av);
 //create_pipe
 void	ft_create_pipe(t_pipe *pipex);
 void	ft_close_pipe(t_pipe pipex);
+//set_cmd
+void	ft_first_cmd(t_pipe *pipex);
+void	ft_mid_cmd(t_pipe *pipex);
+void	ft_last_cmd(t_pipe *pipex, char **av);
 
 #endif

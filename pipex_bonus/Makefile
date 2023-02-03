@@ -6,7 +6,7 @@
 #    By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/08/31 11:35:05 by tnantaki          #+#    #+#              #
-#    Updated: 2023/02/03 16:27:26 by tnantaki         ###   ########.fr        #
+#    Updated: 2023/02/03 17:37:09 by tnantaki         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ MANDA_PATH	= mandatory/
 #srcs
 MANDA_SRCS	= ft_pipex.c ft_utils.c
 
-BONUS_SRCS	= ft_pipex_bonus.c ft_utils_bonus.c ft_create_pipe_bonus.c ft_setup_bonus.c
+BONUS_SRCS	= ft_pipex_bonus.c ft_utils_bonus.c ft_create_pipe_bonus.c ft_setup_bonus.c ft_setcmd_bonus.c
 
 LIBFT_SRCS	= ft_strlen.c ft_strjoin.c ft_strjoinfree.c ft_strtrim.c\
 			ft_split.c ft_putstr_fd.c ft_putendl_fd.c ft_strncmp.c
