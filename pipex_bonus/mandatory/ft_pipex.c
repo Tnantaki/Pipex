@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 10:53:10 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/01 19:06:33 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/03 12:31:45 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ static void	ft_child2(char **path, char **av, int *fd_pipe, char **envp)
 static char	**ft_findpath(char **envp)
 {
 	char	**path;
+	char	*tmp;
 	int		i;
 
 	i = 0;
@@ -79,13 +80,16 @@ static char	**ft_findpath(char **envp)
 			break ;
 		i++;
 	}
-	path = ft_split(ft_strtrim(envp[i], "PATH="), ':');
+	tmp = ft_strtrim(envp[i], "PATH=");
+	path = ft_split(tmp, ':');
+	free(tmp);
 	i = 0;
 	while (path[i])
 	{
 		path[i] = ft_strjoinfree(path[i], "/");
 		i++;
 	}
+	free(path);
 	return (path);
 }
 

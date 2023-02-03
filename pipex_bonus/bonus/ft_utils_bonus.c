@@ -28,7 +28,7 @@ void	ft_double_free(char **ptr)
 void	ft_prterr(int err, char *msg, int errnum)
 {
 	if (err == 1)
-		ft_putstr_fd("Program take only 4 arguments.\n", STDERR_FILENO);
+		ft_putstr_fd("Invalid number of argument.\n", STDERR_FILENO);
 	else if (err == 2)
 		perror("Pipe error :");
 	else if (err == 3)
@@ -48,6 +48,8 @@ void	ft_prterr(int err, char *msg, int errnum)
 		ft_putstr_fd("zsh: command not found: ", STDERR_FILENO);
 		ft_putendl_fd(msg, STDERR_FILENO);
 	}
+	else if (err == 7)
+		perror(msg);
 	exit (errnum);
 }
 

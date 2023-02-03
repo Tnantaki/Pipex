@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 10:53:10 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/02 00:28:03 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/03 11:41:59 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,8 @@ static void	ft_child2(char **path, char **av, int *fd_pipe, char **envp)
 	}
 }
 
-static char	**ft_findpath(char **envp)
+void	ft_findpath(char **envp, t_pipe *pipex)
 {
-	char	**path;
 	int		i;
 
 	i = 0;
@@ -79,14 +78,13 @@ static char	**ft_findpath(char **envp)
 			break ;
 		i++;
 	}
-	path = ft_split(ft_strtrim(envp[i], "PATH="), ':');
+	pipex->path = ft_split(ft_strtrim(envp[i], "PATH="), ':');
 	i = 0;
-	while (path[i])
+	while (pipex->path[i])
 	{
-		path[i] = ft_strjoinfree(path[i], "/");
+		pipex->path[i] = ft_strjoinfree(pipex->path[i], "/");
 		i++;
 	}
-	return (path);
 }
 
 void	ft_check_arg(int ac, char **av, t_pipe *pipex)
@@ -109,25 +107,65 @@ void	ft_check_arg(int ac, char **av, t_pipe *pipex)
 	pipex->pipe_nb = pipex->cmd_nb - 1;
 }
 
-int	main(int ac, char **av, char **envp)
+void	ft_open_infile(char **av, t_pipe *pipex)
 {
-	t_pipe	pipex;
+	if (pipex->here_doc)
+	{
+		pipex->fd_in = open("here_doc", O_RDWR | O_CREAT | O_TRUNC, 0777);
+		if (pipex->fd_in == -1)
+			ft_prterr(HERE_DOC, "here_doc", errno);
+		pipex->len = ft_strlen(av[2]);
+		while (1)
+		{
+			ft_putstr_fd("heredoc> ", STDOUT_FILENO);
+			pipex->tmp = get_next_line(STDIN_FILENO);// Don't forget to check error malloc
+			if (ft_strncmp(av[2], pipex->tmp, pipex->len) == 0
+				&& pipex->len + 1 == ft_strlen(pipex->tmp))
+				break ;
+			ft_putstr_fd(pipex->tmp, pipex->fd_in);
+			free (pipex->tmp);
+		}
+		free (pipex->tmp);
+	}
+	else
+	{
+		pipex->fd_in = open(av[1], O_RDONLY);
+		if (pipex->fd_in == -1)
+			ft_prterr(NO_INFILE, av[1], errno);
+	}
+}
 
-	printf("Hello\n");
-	ft_check_arg(ac, av, &pipex);
-	// if (ac < )
-	// 	ft_prterr(ARG_ERR, NULL, 1);
-	int	fd = open("infile.txt", O_RDONLY);
-	printf("fd:%d\n", fd);
-	char *str = get_next_line(fd);
-	printf("%s", str);
-	printf("%d\n", pipex.here_doc);
-	printf("%d\n", pipex.cmd_nb);
-	printf("%d\n", pipex.pipe_nb);
-	exit (0);
-	pipex.path = ft_findpath(envp);
-	if (pipe(pipex.fd_pipe) == -1)
-		ft_prterr(PIPE_ERR, NULL, errno);
+void	ft_fork_child(char **av, t_pipe pipex, char **envp)
+{
+	int	i;
+
+	i = 0;
+	while (i < pipex.cmd_nb)
+	{
+		pipex.pid = fork();
+		if (pipex.pid == -1)
+			ft_prterr(FORK_ERR, NULL, errno);
+		if (pipex.pid == 0)
+		{
+			if (i == 0) //First
+			{
+				dup2(pipex.fd_in, STDIN_FILENO);
+				dup2(pipex.fd_pipe[1], STDOUT_FILENO);
+				ft_child1(pipex.path, av, pipex.fd_pipe, envp);
+			}
+			else if (i == (pipex.cmd_nb - 1)) //Last
+			{
+				dup2(fd_pipe[0], STDIN_FILENO);
+				dup2(pipex.fd_out, STDOUT_FILENO);
+				ft_child1(pipex.path, av, pipex.fd_pipe, envp);
+			}
+			else if (i > 0 && i i < (pipex.cmd_nb - 1)) //between
+				ft_child1(pipex.path, av, pipex.fd_pipe, envp);
+		}
+		i++;
+	}
+
+	//old//
 	pipex.pid1 = fork();
 	if (pipex.pid1 == -1)
 		ft_prterr(FORK_ERR, NULL, errno);
@@ -138,8 +176,21 @@ int	main(int ac, char **av, char **envp)
 		ft_prterr(FORK_ERR, NULL, errno);
 	if (pipex.pid2 == 0)
 		ft_child2(pipex.path, av, pipex.fd_pipe, envp);
-	close(pipex.fd_pipe[0]);
-	close(pipex.fd_pipe[1]);
+}
+
+int	main(int ac, char **av, char **envp)
+{
+	t_pipe	pipex;
+
+	ft_check_arg(ac, av, &pipex);
+	ft_open_infile(av, &pipex);
+	ft_create_pipe(&pipex);
+	ft_findpath(envp, &pipex);
+	for (int i = 0;*pipex.path;i++)
+		printf("%s\n", *pipex.path++);
+	exit (0);
+	ft_fork_child(av, pipex, envp);
+	ft_close_pipe(pipex);
 	waitpid(pipex.pid1, NULL, 0);
 	waitpid(pipex.pid2, &pipex.status, 0);
 	ft_double_free(pipex.path);

@@ -1,11 +1,1 @@
-Makefile
-abc
-ft_pipex.c
-ft_pipex.o
-ft_utils.c
-ft_utils.o
-infile
-libft
-outfile
-pipex
-pipex.h
+      12
