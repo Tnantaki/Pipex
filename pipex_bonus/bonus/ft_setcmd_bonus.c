@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 17:37:39 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/04 16:29:44 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/04 19:59:04 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,10 @@ void	ft_last_cmd(t_pipe *pipex, char **av)
 	int	out_i;
 
 	out_i = pipex->i + 3 + pipex->here_doc;
-	pipex->fd_out = open(av[out_i], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (pipex->here_doc)
+		pipex->fd_out = open(av[out_i], O_WRONLY | O_CREAT | O_APPEND, 0777);
+	else
+		pipex->fd_out = open(av[out_i], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (pipex->fd_out == -1)
 	{
 		ft_double_free(pipex->path);
