@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 00:04:07 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/01/31 14:45:25 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/05 00:22:03 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,5 @@ typedef struct s_pipe
 //utils
 void	ft_double_free(char **ptr);
 void	ft_prterr(int err, char *msg, int errnum);
-char	*ft_fcmd(char **path, char **cmd, char *av);
 
 #endif

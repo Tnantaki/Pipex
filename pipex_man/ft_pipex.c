@@ -6,11 +6,39 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 10:53:10 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/03 12:33:33 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/05 00:41:43 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+static char	*ft_fcmd(char **path, char **cmd, char *av)
+{
+	char	*fcmd;
+	int		i;
+
+	i = 0;
+	if (access(cmd[0], F_OK) == 0)
+		return (ft_double_free(path), fcmd = ft_strjoin("", cmd[0]));
+	if (ft_strncmp(cmd[0], "/", 1) == 0 && access(cmd[0], F_OK) != 0)
+	{
+		ft_double_free(cmd);
+		ft_double_free(path);
+		ft_prterr(NO_INFILE, av, 127);
+	}
+	while (path[i])
+	{
+		fcmd = ft_strjoin(path[i], cmd[0]);
+		if (access(fcmd, F_OK) == 0)
+			return (ft_double_free(path), fcmd);
+		free (fcmd);
+		i++;
+	}
+	ft_double_free(cmd);
+	ft_double_free(path);
+	ft_prterr(COM_ERR, av, 127);
+	return (NULL);
+}
 
 static void	ft_child1(char **path, char **av, int *fd_pipe, char **envp)
 {
@@ -82,7 +110,8 @@ static char	**ft_findpath(char **envp)
 	}
 	tmp = ft_strtrim(envp[i], "PATH=");
 	path = ft_split(tmp, ':');
-	free(tmp);
+	if (tmp)
+		free(tmp);
 	i = 0;
 	while (path[i])
 	{

@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 00:04:07 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/04 18:22:29 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/04 20:08:52 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 # define NO_OUTFILE 5
 # define COM_ERR 6
 # define HERE_DOC 7
-# define HERE_DOC_PATH ".here_doc"
+# define HERE_DOC_PATH "here_doc"
 
 typedef struct s_pipe
 {
