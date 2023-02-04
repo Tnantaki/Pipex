@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:52:15 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/03 14:57:51 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/04 13:54:38 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,34 +32,6 @@ void	ft_check_arg(int ac, char **av, t_pipe *pipex)
 	pipex->pipe_nb = pipex->cmd_nb - 1;
 }
 
-void	ft_open_infile(char **av, t_pipe *pipex)
-{
-	if (pipex->here_doc)
-	{
-		pipex->fd_in = open("here_doc", O_RDWR | O_CREAT | O_TRUNC, 0777);
-		if (pipex->fd_in == -1)
-			ft_prterr(HERE_DOC, "here_doc", errno);
-		pipex->len = ft_strlen(av[2]);
-		while (1)
-		{
-			ft_putstr_fd("heredoc> ", STDOUT_FILENO);
-			pipex->tmp = get_next_line(STDIN_FILENO);// Check error malloc
-			if (ft_strncmp(av[2], pipex->tmp, pipex->len) == 0
-				&& pipex->len + 1 == ft_strlen(pipex->tmp))
-				break ;
-			ft_putstr_fd(pipex->tmp, pipex->fd_in);
-			free (pipex->tmp);
-		}
-		free (pipex->tmp);
-	}
-	else
-	{
-		pipex->fd_in = open(av[1], O_RDONLY);
-		if (pipex->fd_in == -1)
-			ft_prterr(NO_INFILE, av[1], errno);
-	}
-}
-
 void	ft_findpath(char **envp, t_pipe *pipex)
 {
 	char	*tmp;
@@ -75,11 +47,47 @@ void	ft_findpath(char **envp, t_pipe *pipex)
 	}
 	tmp = ft_strtrim(envp[i], "PATH=");
 	pipex->path = ft_split(tmp, ':');
-	free(tmp);
+	if (tmp)
+		free(tmp);
 	i = 0;
 	while (pipex->path[i])
 	{
 		pipex->path[i] = ft_strjoinfree(pipex->path[i], "/");
 		i++;
 	}
+}
+
+void	ft_open_here_doc(char **av, t_pipe *pipex)
+{
+	pipex->fd_in = open(HERE_DOC_PATH, O_RDWR | O_CREAT | O_TRUNC, 0777);
+	if (pipex->fd_in == -1)
+		ft_prterr(HERE_DOC, HERE_DOC_PATH, errno);
+	pipex->len_lim = ft_strlen(av[2]);
+	while (1)
+	{
+		ft_putstr_fd("heredoc> ", STDOUT_FILENO);
+		pipex->str_tmp = get_next_line(STDIN_FILENO);
+		if (!(pipex->str_tmp))
+			ft_gnl_err(pipex);
+		if (ft_strncmp(av[2], pipex->str_tmp, pipex->len_lim) == 0
+			&& pipex->len_lim + 1 == ft_strlen(pipex->str_tmp))
+			break ;
+		ft_putstr_fd(pipex->str_tmp, pipex->fd_in);
+		free (pipex->str_tmp);
+	}
+	free (pipex->str_tmp);
+	close(pipex->fd_in);
+	pipex->fd_in = open(HERE_DOC_PATH, O_RDONLY);
+	if (pipex->fd_in == -1)
+	{
+		unlink(HERE_DOC_PATH);
+		ft_prterr(HERE_DOC, HERE_DOC_PATH, errno);
+	}
+}
+
+void	ft_open_infile(char **av, t_pipe *pipex)
+{
+	pipex->fd_in = open(av[1], O_RDONLY);
+	if (pipex->fd_in == -1)
+		ft_prterr(NO_INFILE, av[1], errno);
 }

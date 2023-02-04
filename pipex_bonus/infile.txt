@@ -11,5 +11,6 @@ myout
 outfile
 pipex.h
 srcout
-strcat
-strlen
+ft_strcat
+ft_strlen
+ft_strcmp

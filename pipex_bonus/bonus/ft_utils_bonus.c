@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../includes/pipex_bonus.h"
 
 void	ft_double_free(char **ptr)
 {
@@ -24,6 +24,30 @@ void	ft_double_free(char **ptr)
 	}
 	free (ptr);
 }
+
+void	ft_parent_free(t_pipe *pipex)
+{
+	if (pipex->here_doc)
+		unlink(HERE_DOC_PATH);
+	close(pipex->fd_in);
+	ft_close_pipe(pipex);
+	ft_double_free(pipex->path);
+}
+
+void	ft_fork_err(t_pipe *pipex, int errnum)
+{
+	ft_parent_free(pipex);
+	free(pipex->pid);
+	ft_prterr(FORK_ERR, NULL, errnum);
+}
+
+void	ft_gnl_err(t_pipe *pipex)
+{
+	close(pipex->fd_in);
+	unlink(HERE_DOC_PATH);
+	ft_prterr(HERE_DOC, HERE_DOC_PATH, 1);
+}
+
 
 void	ft_prterr(int err, char *msg, int errnum)
 {
@@ -51,32 +75,4 @@ void	ft_prterr(int err, char *msg, int errnum)
 	else if (err == 7)
 		perror(msg);
 	exit (errnum);
-}
-
-char	*ft_fcmd(char **path, char **cmd, char *av)
-{
-	char	*fcmd;
-	int		i;
-
-	i = 0;
-	if (access(cmd[0], F_OK) == 0)
-		return (ft_double_free(path), fcmd = ft_strjoin("", cmd[0]));
-	if (ft_strncmp(cmd[0], "/bin", 4) == 0 && access(cmd[0], F_OK) != 0)
-	{
-		ft_double_free(cmd);
-		ft_double_free(path);
-		ft_prterr(NO_INFILE, av, 127);
-	}
-	while (path[i])
-	{
-		fcmd = ft_strjoin(path[i], cmd[0]);
-		if (access(fcmd, F_OK) == 0)
-			return (ft_double_free(path), fcmd);
-		free (fcmd);
-		i++;
-	}
-	ft_double_free(cmd);
-	ft_double_free(path);
-	ft_prterr(COM_ERR, av, 127);
-	return (NULL);
 }

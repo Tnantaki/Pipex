@@ -50,31 +50,3 @@ void	ft_prterr(int err, char *msg, int errnum)
 	}
 	exit (errnum);
 }
-
-char	*ft_fcmd(char **path, char **cmd, char *av)
-{
-	char	*fcmd;
-	int		i;
-
-	i = 0;
-	if (access(cmd[0], F_OK) == 0)
-		return (ft_double_free(path), fcmd = ft_strjoin("", cmd[0]));
-	if (ft_strncmp(cmd[0], "/bin", 4) == 0 && access(cmd[0], F_OK) != 0)
-	{
-		ft_double_free(cmd);
-		ft_double_free(path);
-		ft_prterr(NO_INFILE, av, 127);
-	}
-	while (path[i])
-	{
-		fcmd = ft_strjoin(path[i], cmd[0]);
-		if (access(fcmd, F_OK) == 0)
-			return (ft_double_free(path), fcmd);
-		free (fcmd);
-		i++;
-	}
-	ft_double_free(cmd);
-	ft_double_free(path);
-	ft_prterr(COM_ERR, av, 127);
-	return (NULL);
-}

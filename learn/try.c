@@ -2,21 +2,16 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <stdio.h>
-
-int	child(char *str)
-{
-	sleep (4);
-	exit (2);
-}
+#include <fcntl.h>
 
 int	main(void)
 {
-	int	pid = fork();
-	int	status;
+	int fd = open("outfile", O_RDWR | O_CREAT | O_TRUNC, 0777);
+	printf("fd:%d\n", fd);
+	unlink("outfile");
+	printf("fd:%d\n", fd);
+	write(fd, "hello\n", 6);
+	// int fd2 = open("infile", O_RDWR);
+	// printf("fd:%d\n", fd2);
 
-	if (pid == 0)
-		child("Hello");
-	waitpid(pid, &status, 0);
-	printf("Parent\n");
-	printf("status:%d\n", WEXITSTATUS(status));
 }
