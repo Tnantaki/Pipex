@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 10:53:10 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/04 13:36:10 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/04 16:33:29 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,15 @@ int	main(int ac, char **av, char **envp)
 	t_pipe	pipex;
 
 	ft_check_arg(ac, av, &pipex);
+	// printf("Heredoc: %d\n", pipex.here_doc);
 	if (pipex.here_doc)
 		ft_open_here_doc(av, &pipex);
 	else
 		ft_open_infile(av, &pipex);
-	ft_open_infile(av, &pipex);
 	ft_findpath(envp, &pipex);
 	ft_create_pipe(&pipex);
+	// printf("Hello\n");
+	// printf("%d\n", pipex.cmd_nb);
 	pipex.i = 0;
 	while (pipex.i < pipex.cmd_nb)
 	{

@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:52:15 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/04 13:54:38 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/04 16:14:25 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	ft_check_arg(int ac, char **av, t_pipe *pipex)
 {
 	pipex->here_doc = 0;
 
-	if (ft_strncmp(av[1], "here_doc", 8) == 0)
+	if (ft_strncmp(av[1], "here_doc", 8) == 0 && ft_strlen(av[1]) == 8)
 	{
 		if (ac < 6)
 			ft_prterr(ARG_ERR, NULL, 1);
@@ -89,5 +89,5 @@ void	ft_open_infile(char **av, t_pipe *pipex)
 {
 	pipex->fd_in = open(av[1], O_RDONLY);
 	if (pipex->fd_in == -1)
-		ft_prterr(NO_INFILE, av[1], errno);
+		ft_prterr(NO_INFILE, av[1], 0);
 }

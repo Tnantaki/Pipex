@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 17:37:39 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/04 10:27:50 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/04 16:29:44 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 
 void	ft_first_cmd(t_pipe *pipex)
 {
+	if (pipex->fd_in == -1)
+	{
+		close(pipex->fd_in);
+		ft_close_pipe(pipex);
+		ft_double_free(pipex->path);
+		exit (2);
+	}
 	pipex->fd_read = pipex->fd_in;
 	pipex->fd_write = pipex->fd_pipe[1];
 	dup2(pipex->fd_read, STDIN_FILENO);

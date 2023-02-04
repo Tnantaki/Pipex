@@ -61,6 +61,7 @@ void	ft_prterr(int err, char *msg, int errnum)
 	{
 		ft_putstr_fd("zsh: no such file or directory: ", STDERR_FILENO);
 		ft_putendl_fd(msg, STDERR_FILENO);
+		return ;
 	}
 	else if (err == 5)
 	{
