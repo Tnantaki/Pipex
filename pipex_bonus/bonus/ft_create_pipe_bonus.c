@@ -14,26 +14,30 @@
 
 void	ft_create_pipe(t_pipe *pipex)
 {
-	int	i;
-
-	i = 0;
+	pipex->i = 0;
 	pipex->fd_pipe = malloc(sizeof(int) * (pipex->pipe_nb * 2));
 	pipex->pid = malloc(sizeof(int) * (pipex->cmd_nb));
 	if (!(pipex->fd_pipe) || !(pipex->pid))
 	{
-		unlink(HERE_DOC_PATH);
+		if (pipex->here_doc)
+			unlink(HERE_DOC_PATH);
+		close(pipex->fd_in);
 		ft_double_free(pipex->path);
 		ft_prterr(PIPE_ERR, NULL, errno);
 	}
-	while (i < pipex->pipe_nb)
+	while (pipex->i < pipex->pipe_nb)
 	{
-		if (pipe(pipex->fd_pipe + (i * 2)) == -1)
+		if (pipe(pipex->fd_pipe + (pipex->i * 2)) == -1)
 		{
-			unlink(HERE_DOC_PATH);
+			if (pipex->here_doc)
+				unlink(HERE_DOC_PATH);
+			close(pipex->fd_in);
 			ft_double_free(pipex->path);
+			free(pipex->fd_pipe);
+			free(pipex->pid);
 			ft_prterr(PIPE_ERR, NULL, errno);
 		}
-		i++;
+		pipex->i++;
 	}
 }
 

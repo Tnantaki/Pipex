@@ -43,8 +43,8 @@ void	ft_fork_err(t_pipe *pipex, int errnum)
 
 void	ft_gnl_err(t_pipe *pipex)
 {
-	close(pipex->fd_in);
 	unlink(HERE_DOC_PATH);
+	close(pipex->fd_in);
 	ft_prterr(HERE_DOC, HERE_DOC_PATH, 1);
 }
 

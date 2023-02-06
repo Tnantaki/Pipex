@@ -58,12 +58,6 @@ void	ft_check_arg(int ac, char **av, t_pipe *pipex);
 void	ft_open_here_doc(char **av, t_pipe *pipex);
 void	ft_open_infile(char **av, t_pipe *pipex);
 void	ft_findpath(char **envp, t_pipe *pipex);
-//utils
-void	ft_double_free(char **ptr);
-void	ft_parent_free(t_pipe *pipex);
-void	ft_fork_err(t_pipe *pipex, int errnum);
-void	ft_gnl_err(t_pipe *pipex);
-void	ft_prterr(int err, char *msg, int errnum);
 //create_pipe
 void	ft_create_pipe(t_pipe *pipex);
 void	ft_close_pipe(t_pipe *pipex);
@@ -71,5 +65,11 @@ void	ft_close_pipe(t_pipe *pipex);
 void	ft_first_cmd(t_pipe *pipex);
 void	ft_mid_cmd(t_pipe *pipex);
 void	ft_last_cmd(t_pipe *pipex, char **av);
+//utils
+void	ft_double_free(char **ptr);
+void	ft_parent_free(t_pipe *pipex);
+void	ft_fork_err(t_pipe *pipex, int errnum);
+void	ft_gnl_err(t_pipe *pipex);
+void	ft_prterr(int err, char *msg, int errnum);
 
 #endif

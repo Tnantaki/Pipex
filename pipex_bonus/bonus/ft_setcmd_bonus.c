@@ -47,6 +47,8 @@ void	ft_last_cmd(t_pipe *pipex, char **av)
 		pipex->fd_out = open(av[out_i], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (pipex->fd_out == -1)
 	{
+		close(pipex->fd_in);
+		ft_close_pipe(pipex);
 		ft_double_free(pipex->path);
 		ft_prterr(NO_OUTFILE, av[out_i], 1);
 	}
