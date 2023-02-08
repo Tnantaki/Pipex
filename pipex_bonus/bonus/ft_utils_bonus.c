@@ -27,8 +27,6 @@ void	ft_double_free(char **ptr)
 
 void	ft_parent_free(t_pipe *pipex)
 {
-	if (pipex->here_doc)
-		unlink(HERE_DOC_PATH);
 	close(pipex->fd_in);
 	ft_close_pipe(pipex);
 	ft_double_free(pipex->path);
@@ -43,11 +41,10 @@ void	ft_fork_err(t_pipe *pipex, int errnum)
 
 void	ft_gnl_err(t_pipe *pipex)
 {
-	unlink(HERE_DOC_PATH);
 	close(pipex->fd_in);
+	unlink(HERE_DOC_PATH);
 	ft_prterr(HERE_DOC, HERE_DOC_PATH, 1);
 }
-
 
 void	ft_prterr(int err, char *msg, int errnum)
 {
@@ -58,22 +55,19 @@ void	ft_prterr(int err, char *msg, int errnum)
 	else if (err == 3)
 		perror("Fork error :");
 	else if (err == 4)
-	{
-		ft_putstr_fd("zsh: no such file or directory: ", STDERR_FILENO);
-		ft_putendl_fd(msg, STDERR_FILENO);
-		return ;
-	}
+		msg = ft_strjoin(msg, ": no such file or directory\n");
 	else if (err == 5)
-	{
-		ft_putstr_fd("zsh: no such file or directory: ", STDERR_FILENO);
-		ft_putendl_fd(msg, STDERR_FILENO);
-	}
+		msg = ft_strjoin(msg, ": no such file or directory\n");
 	else if (err == 6)
-	{
-		ft_putstr_fd("zsh: command not found: ", STDERR_FILENO);
-		ft_putendl_fd(msg, STDERR_FILENO);
-	}
+		msg = ft_strjoinfree(msg, ": command not found\n");
 	else if (err == 7)
 		perror(msg);
+	if (msg && (err == 4 || err == 5 || err == 6))
+	{
+		ft_putstr_fd(msg, STDERR_FILENO);
+		free(msg);
+	}
+	if (err == 4)
+		return ;
 	exit (errnum);
 }

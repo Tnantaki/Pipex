@@ -19,9 +19,9 @@ void	ft_create_pipe(t_pipe *pipex)
 	pipex->pid = malloc(sizeof(int) * (pipex->cmd_nb));
 	if (!(pipex->fd_pipe) || !(pipex->pid))
 	{
+		close(pipex->fd_in);
 		if (pipex->here_doc)
 			unlink(HERE_DOC_PATH);
-		close(pipex->fd_in);
 		ft_double_free(pipex->path);
 		ft_prterr(PIPE_ERR, NULL, errno);
 	}
@@ -29,9 +29,9 @@ void	ft_create_pipe(t_pipe *pipex)
 	{
 		if (pipe(pipex->fd_pipe + (pipex->i * 2)) == -1)
 		{
+			close(pipex->fd_in);
 			if (pipex->here_doc)
 				unlink(HERE_DOC_PATH);
-			close(pipex->fd_in);
 			ft_double_free(pipex->path);
 			free(pipex->fd_pipe);
 			free(pipex->pid);
@@ -47,7 +47,7 @@ void	ft_close_pipe(t_pipe *pipex)
 	int	fd_pipe_nb;
 
 	i = 0;
-	fd_pipe_nb = pipex->pipe_nb *2;
+	fd_pipe_nb = pipex->pipe_nb * 2;
 	while (i < fd_pipe_nb)
 	{
 		close(pipex->fd_pipe[i]);

@@ -20,7 +20,7 @@ static char	*ft_fcmd(char **path, char **cmd, char *av)
 	i = 0;
 	if (access(cmd[0], F_OK) == 0)
 		return (ft_double_free(path), fcmd = ft_strjoin("", cmd[0]));
-	if (ft_strncmp(cmd[0], "/", 1) == 0 && access(cmd[0], F_OK) != 0)
+	if (ft_strchr(cmd[0], '/') && access(cmd[0], F_OK) != 0)
 	{
 		ft_double_free(cmd);
 		ft_double_free(path);
@@ -34,9 +34,10 @@ static char	*ft_fcmd(char **path, char **cmd, char *av)
 		free (fcmd);
 		i++;
 	}
+	fcmd = ft_strdup(cmd[0]);
 	ft_double_free(cmd);
 	ft_double_free(path);
-	ft_prterr(COM_ERR, av, 127);
+	ft_prterr(COM_ERR, fcmd, 127);
 	return (NULL);
 }
 
@@ -123,27 +124,27 @@ static char	**ft_findpath(char **envp)
 
 int	main(int ac, char **av, char **envp)
 {
-	t_pipe	mypipex;
+	t_pipe	pipex;
 
 	if (ac != 5)
 		ft_prterr(ARG_ERR, NULL, 1);
-	mypipex.path = ft_findpath(envp);
-	if (pipe(mypipex.fd_pipe) == -1)
+	pipex.path = ft_findpath(envp);
+	if (pipe(pipex.fd_pipe) == -1)
 		ft_prterr(PIPE_ERR, NULL, errno);
-	mypipex.pid1 = fork();
-	if (mypipex.pid1 == -1)
+	pipex.pid1 = fork();
+	if (pipex.pid1 == -1)
 		ft_prterr(FORK_ERR, NULL, errno);
-	if (mypipex.pid1 == 0)
-		ft_child1(mypipex.path, av, mypipex.fd_pipe, envp);
-	mypipex.pid2 = fork();
-	if (mypipex.pid2 == -1)
+	if (pipex.pid1 == 0)
+		ft_child1(pipex.path, av, pipex.fd_pipe, envp);
+	pipex.pid2 = fork();
+	if (pipex.pid2 == -1)
 		ft_prterr(FORK_ERR, NULL, errno);
-	if (mypipex.pid2 == 0)
-		ft_child2(mypipex.path, av, mypipex.fd_pipe, envp);
-	close(mypipex.fd_pipe[0]);
-	close(mypipex.fd_pipe[1]);
-	waitpid(mypipex.pid1, NULL, 0);
-	waitpid(mypipex.pid2, &mypipex.status, 0);
-	ft_double_free(mypipex.path);
-	return (WEXITSTATUS(mypipex.status));
+	if (pipex.pid2 == 0)
+		ft_child2(pipex.path, av, pipex.fd_pipe, envp);
+	close(pipex.fd_pipe[0]);
+	close(pipex.fd_pipe[1]);
+	ft_double_free(pipex.path);
+	waitpid(pipex.pid1, NULL, 0);
+	waitpid(pipex.pid2, &pipex.status, 0);
+	return (WEXITSTATUS(pipex.status));
 }

@@ -16,7 +16,6 @@ void	ft_first_cmd(t_pipe *pipex)
 {
 	if (pipex->fd_in == -1)
 	{
-		close(pipex->fd_in);
 		ft_close_pipe(pipex);
 		ft_double_free(pipex->path);
 		exit (2);

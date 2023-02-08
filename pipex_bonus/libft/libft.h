@@ -17,9 +17,11 @@
 # include <stdlib.h>
 
 int		ft_strlen(const char *str);
+char	*ft_strchr(const char *str, int c);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
+char	*ft_strdup(const char *s1);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strjoinfree(char *s1, char *s2);
 char	*ft_strtrim(char *s1, char *set);

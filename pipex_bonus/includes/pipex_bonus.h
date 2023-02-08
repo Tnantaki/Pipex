@@ -30,7 +30,7 @@
 # define NO_OUTFILE 5
 # define COM_ERR 6
 # define HERE_DOC 7
-# define HERE_DOC_PATH "here_doc"
+# define HERE_DOC_PATH ".here_doc"
 
 typedef struct s_pipe
 {
@@ -43,6 +43,7 @@ typedef struct s_pipe
 	int		cmd_nb;
 	int		pipe_nb;
 	int		*fd_pipe;
+	int		fd_tmp;
 	int		fd_in;
 	int		fd_out;
 	int		fd_read;

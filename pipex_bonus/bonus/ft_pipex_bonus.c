@@ -20,11 +20,11 @@ static char	*ft_fcmd(char **path, char **cmd, char *av)
 	i = 0;
 	if (access(cmd[0], F_OK) == 0)
 		return (ft_double_free(path), fcmd = ft_strjoin("", cmd[0]));
-	if (ft_strncmp(cmd[0], "/", 1) == 0 && access(cmd[0], F_OK) != 0)
+	if (ft_strchr(cmd[0], '/') && access(cmd[0], F_OK) != 0)
 	{
 		ft_double_free(cmd);
 		ft_double_free(path);
-		ft_prterr(NO_INFILE, av, 127);
+		ft_prterr(NO_INFILE, av, 2);
 	}
 	while (path[i])
 	{
@@ -34,9 +34,10 @@ static char	*ft_fcmd(char **path, char **cmd, char *av)
 		free (fcmd);
 		i++;
 	}
+	fcmd = ft_strdup(cmd[0]);
 	ft_double_free(cmd);
 	ft_double_free(path);
-	ft_prterr(COM_ERR, av, 127);
+	ft_prterr(COM_ERR, fcmd, 127);
 	return (NULL);
 }
 
@@ -89,5 +90,7 @@ int	main(int ac, char **av, char **envp)
 	while (pipex.i < pipex.cmd_nb)
 		waitpid(pipex.pid[pipex.i++], &pipex.status, 0);
 	free(pipex.pid);
+	if (pipex.here_doc)
+		unlink(HERE_DOC_PATH);
 	return (WEXITSTATUS(pipex.status));
 }

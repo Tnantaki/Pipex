@@ -15,7 +15,6 @@
 void	ft_check_arg(int ac, char **av, t_pipe *pipex)
 {
 	pipex->here_doc = 0;
-
 	if (ft_strncmp(av[1], "here_doc", 8) == 0 && ft_strlen(av[1]) == 8)
 	{
 		if (ac < 6)
@@ -59,8 +58,8 @@ void	ft_findpath(char **envp, t_pipe *pipex)
 
 void	ft_open_here_doc(char **av, t_pipe *pipex)
 {
-	pipex->fd_in = open(HERE_DOC_PATH, O_RDWR | O_CREAT | O_TRUNC, 0777);
-	if (pipex->fd_in == -1)
+	pipex->fd_tmp = open(HERE_DOC_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (pipex->fd_tmp == -1)
 		ft_prterr(HERE_DOC, HERE_DOC_PATH, errno);
 	pipex->len_lim = ft_strlen(av[2]);
 	while (1)
@@ -70,13 +69,13 @@ void	ft_open_here_doc(char **av, t_pipe *pipex)
 		if (!(pipex->str_tmp))
 			ft_gnl_err(pipex);
 		if (ft_strncmp(av[2], pipex->str_tmp, pipex->len_lim) == 0
-			&& pipex->len_lim + 1 == ft_strlen(pipex->str_tmp))
+			&& pipex->str_tmp[pipex->len_lim] == '\n')
 			break ;
-		ft_putstr_fd(pipex->str_tmp, pipex->fd_in);
+		ft_putstr_fd(pipex->str_tmp, pipex->fd_tmp);
 		free (pipex->str_tmp);
 	}
 	free (pipex->str_tmp);
-	close(pipex->fd_in);
+	close(pipex->fd_tmp);
 	pipex->fd_in = open(HERE_DOC_PATH, O_RDONLY);
 	if (pipex->fd_in == -1)
 	{
