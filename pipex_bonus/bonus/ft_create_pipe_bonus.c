@@ -12,46 +12,46 @@
 
 #include "../includes/pipex_bonus.h"
 
-void	ft_create_pipe(t_pipe *pipex)
+void	ft_create_pipe(t_pipe *px)
 {
-	pipex->i = 0;
-	pipex->fd_pipe = malloc(sizeof(int) * (pipex->pipe_nb * 2));
-	pipex->pid = malloc(sizeof(int) * (pipex->cmd_nb));
-	if (!(pipex->fd_pipe) || !(pipex->pid))
+	px->i = 0;
+	px->fd_pipe = malloc(sizeof(int) * (px->pipe_nb * 2));
+	px->pid = malloc(sizeof(int) * (px->cmd_nb));
+	if (!(px->fd_pipe) || !(px->pid))
 	{
-		close(pipex->fd_in);
-		if (pipex->here_doc)
+		ft_double_free(px->path);
+		close(px->fd_in);
+		if (px->here_doc)
 			unlink(HERE_DOC_PATH);
-		ft_double_free(pipex->path);
 		ft_prterr(PIPE_ERR, NULL, errno);
 	}
-	while (pipex->i < pipex->pipe_nb)
+	while (px->i < px->pipe_nb)
 	{
-		if (pipe(pipex->fd_pipe + (pipex->i * 2)) == -1)
+		if (pipe(px->fd_pipe + (px->i * 2)) == -1)
 		{
-			close(pipex->fd_in);
-			if (pipex->here_doc)
+			ft_double_free(px->path);
+			close(px->fd_in);
+			if (px->here_doc)
 				unlink(HERE_DOC_PATH);
-			ft_double_free(pipex->path);
-			free(pipex->fd_pipe);
-			free(pipex->pid);
+			free(px->fd_pipe);
+			free(px->pid);
 			ft_prterr(PIPE_ERR, NULL, errno);
 		}
-		pipex->i++;
+		px->i++;
 	}
 }
 
-void	ft_close_pipe(t_pipe *pipex)
+void	ft_close_pipe(t_pipe *px)
 {
 	int	i;
 	int	fd_pipe_nb;
 
 	i = 0;
-	fd_pipe_nb = pipex->pipe_nb * 2;
+	fd_pipe_nb = px->pipe_nb * 2;
 	while (i < fd_pipe_nb)
 	{
-		close(pipex->fd_pipe[i]);
+		close(px->fd_pipe[i]);
 		i++;
 	}
-	free (pipex->fd_pipe);
+	free (px->fd_pipe);
 }

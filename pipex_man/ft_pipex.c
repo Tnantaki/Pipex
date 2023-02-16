@@ -124,27 +124,27 @@ static char	**ft_findpath(char **envp)
 
 int	main(int ac, char **av, char **envp)
 {
-	t_pipe	pipex;
+	t_pipe	px;
 
 	if (ac != 5)
 		ft_prterr(ARG_ERR, NULL, 1);
-	pipex.path = ft_findpath(envp);
-	if (pipe(pipex.fd_pipe) == -1)
+	px.path = ft_findpath(envp);
+	if (pipe(px.fd_pipe) == -1)
 		ft_prterr(PIPE_ERR, NULL, errno);
-	pipex.pid1 = fork();
-	if (pipex.pid1 == -1)
+	px.pid1 = fork();
+	if (px.pid1 == -1)
 		ft_prterr(FORK_ERR, NULL, errno);
-	if (pipex.pid1 == 0)
-		ft_child1(pipex.path, av, pipex.fd_pipe, envp);
-	pipex.pid2 = fork();
-	if (pipex.pid2 == -1)
+	if (px.pid1 == 0)
+		ft_child1(px.path, av, px.fd_pipe, envp);
+	px.pid2 = fork();
+	if (px.pid2 == -1)
 		ft_prterr(FORK_ERR, NULL, errno);
-	if (pipex.pid2 == 0)
-		ft_child2(pipex.path, av, pipex.fd_pipe, envp);
-	close(pipex.fd_pipe[0]);
-	close(pipex.fd_pipe[1]);
-	ft_double_free(pipex.path);
-	waitpid(pipex.pid1, NULL, 0);
-	waitpid(pipex.pid2, &pipex.status, 0);
-	return (WEXITSTATUS(pipex.status));
+	if (px.pid2 == 0)
+		ft_child2(px.path, av, px.fd_pipe, envp);
+	close(px.fd_pipe[0]);
+	close(px.fd_pipe[1]);
+	ft_double_free(px.path);
+	waitpid(px.pid1, NULL, 0);
+	waitpid(px.pid2, &px.status, 0);
+	return (WEXITSTATUS(px.status));
 }

@@ -41,28 +41,28 @@ static char	*ft_fcmd(char **path, char **cmd, char *av)
 	return (NULL);
 }
 
-static void	ft_fork_child(char **av, t_pipe *pipex, char **envp)
+static void	ft_fork_child(char **av, t_pipe *px, char **envp)
 {
-	pipex->pid[pipex->i] = fork();
-	if (pipex->pid[pipex->i] == -1)
-		ft_fork_err(pipex, errno);
-	if (pipex->pid[pipex->i] == 0)
+	px->pid[px->i] = fork();
+	if (px->pid[px->i] == -1)
+		ft_fork_err(px, errno);
+	if (px->pid[px->i] == 0)
 	{
-		free(pipex->pid);
-		pipex->cmd_i = pipex->i + 2 + pipex->here_doc;
-		if (pipex->i == 0)
-			ft_first_cmd(pipex);
-		else if (pipex->i == (pipex->cmd_nb - 1))
-			ft_last_cmd(pipex, av);
-		else if (pipex->i > 0 && pipex->i < (pipex->cmd_nb - 1))
-			ft_mid_cmd(pipex);
-		ft_close_pipe(pipex);
-		pipex->cmd = ft_split(av[pipex->cmd_i], ' ');
-		pipex->fcmd = ft_fcmd(pipex->path, pipex->cmd, av[pipex->cmd_i]);
-		if (execve(pipex->fcmd, pipex->cmd, envp) == -1)
+		free(px->pid);
+		px->cmd_i = px->i + 2 + px->here_doc;
+		if (px->i == 0)
+			ft_first_cmd(px);
+		else if (px->i == (px->cmd_nb - 1))
+			ft_last_cmd(px, av);
+		else if (px->i > 0 && px->i < (px->cmd_nb - 1))
+			ft_mid_cmd(px);
+		ft_close_pipe(px);
+		px->cmd = ft_split(av[px->cmd_i], ' ');
+		px->fcmd = ft_fcmd(px->path, px->cmd, av[px->cmd_i]);
+		if (execve(px->fcmd, px->cmd, envp) == -1)
 		{
-			free(pipex->fcmd);
-			ft_double_free(pipex->cmd);
+			free(px->fcmd);
+			ft_double_free(px->cmd);
 			exit (errno);
 		}
 	}
@@ -70,27 +70,24 @@ static void	ft_fork_child(char **av, t_pipe *pipex, char **envp)
 
 int	main(int ac, char **av, char **envp)
 {
-	t_pipe	pipex;
+	t_pipe	px;
 
-	ft_check_arg(ac, av, &pipex);
-	if (pipex.here_doc)
-		ft_open_here_doc(av, &pipex);
-	else
-		ft_open_infile(av, &pipex);
-	ft_findpath(envp, &pipex);
-	ft_create_pipe(&pipex);
-	pipex.i = 0;
-	while (pipex.i < pipex.cmd_nb)
+	ft_check_arg(ac, av, &px);
+	ft_open_infile(av, &px);
+	ft_findpath(envp, &px);
+	ft_create_pipe(&px);
+	px.i = 0;
+	while (px.i < px.cmd_nb)
 	{
-		ft_fork_child(av, &pipex, envp);
-		pipex.i++;
+		ft_fork_child(av, &px, envp);
+		px.i++;
 	}
-	pipex.i = 0;
-	ft_parent_free(&pipex);
-	while (pipex.i < pipex.cmd_nb)
-		waitpid(pipex.pid[pipex.i++], &pipex.status, 0);
-	free(pipex.pid);
-	if (pipex.here_doc)
+	px.i = 0;
+	ft_parent_free(&px);
+	while (px.i < px.cmd_nb)
+		waitpid(px.pid[px.i++], &px.status, 0);
+	free(px.pid);
+	if (px.here_doc)
 		unlink(HERE_DOC_PATH);
-	return (WEXITSTATUS(pipex.status));
+	return (WEXITSTATUS(px.status));
 }

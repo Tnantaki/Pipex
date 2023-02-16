@@ -25,23 +25,23 @@ void	ft_double_free(char **ptr)
 	free (ptr);
 }
 
-void	ft_parent_free(t_pipe *pipex)
+void	ft_parent_free(t_pipe *px)
 {
-	close(pipex->fd_in);
-	ft_close_pipe(pipex);
-	ft_double_free(pipex->path);
+	close(px->fd_in);
+	ft_close_pipe(px);
+	ft_double_free(px->path);
 }
 
-void	ft_fork_err(t_pipe *pipex, int errnum)
+void	ft_fork_err(t_pipe *px, int errnum)
 {
-	ft_parent_free(pipex);
-	free(pipex->pid);
+	ft_parent_free(px);
+	free(px->pid);
 	ft_prterr(FORK_ERR, NULL, errnum);
 }
 
-void	ft_gnl_err(t_pipe *pipex)
+void	ft_gnl_err(t_pipe *px)
 {
-	close(pipex->fd_in);
+	close(px->fd_in);
 	unlink(HERE_DOC_PATH);
 	ft_prterr(HERE_DOC, HERE_DOC_PATH, 1);
 }

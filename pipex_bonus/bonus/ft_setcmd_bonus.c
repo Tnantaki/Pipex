@@ -12,48 +12,48 @@
 
 #include "../includes/pipex_bonus.h"
 
-void	ft_first_cmd(t_pipe *pipex)
+void	ft_first_cmd(t_pipe *px)
 {
-	if (pipex->fd_in == -1)
+	if (px->fd_in == -1)
 	{
-		ft_close_pipe(pipex);
-		ft_double_free(pipex->path);
+		ft_close_pipe(px);
+		ft_double_free(px->path);
 		exit (2);
 	}
-	pipex->fd_read = pipex->fd_in;
-	pipex->fd_write = pipex->fd_pipe[1];
-	dup2(pipex->fd_read, STDIN_FILENO);
-	dup2(pipex->fd_write, STDOUT_FILENO);
-	close(pipex->fd_in);
+	px->fd_read = px->fd_in;
+	px->fd_write = px->fd_pipe[1];
+	dup2(px->fd_read, STDIN_FILENO);
+	dup2(px->fd_write, STDOUT_FILENO);
+	close(px->fd_in);
 }
 
-void	ft_mid_cmd(t_pipe *pipex)
+void	ft_mid_cmd(t_pipe *px)
 {
-	pipex->fd_read = pipex->fd_pipe[(pipex->i - 1) * 2];
-	pipex->fd_write = pipex->fd_pipe[(pipex->i * 2) + 1];
-	dup2(pipex->fd_read, STDIN_FILENO);
-	dup2(pipex->fd_write, STDOUT_FILENO);
+	px->fd_read = px->fd_pipe[(px->i - 1) * 2];
+	px->fd_write = px->fd_pipe[(px->i * 2) + 1];
+	dup2(px->fd_read, STDIN_FILENO);
+	dup2(px->fd_write, STDOUT_FILENO);
 }
 
-void	ft_last_cmd(t_pipe *pipex, char **av)
+void	ft_last_cmd(t_pipe *px, char **av)
 {
 	int	out_i;
 
-	out_i = pipex->i + 3 + pipex->here_doc;
-	if (pipex->here_doc)
-		pipex->fd_out = open(av[out_i], O_WRONLY | O_CREAT | O_APPEND, 0777);
+	out_i = px->i + 3 + px->here_doc;
+	if (px->here_doc)
+		px->fd_out = open(av[out_i], O_WRONLY | O_CREAT | O_APPEND, 0777);
 	else
-		pipex->fd_out = open(av[out_i], O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	if (pipex->fd_out == -1)
+		px->fd_out = open(av[out_i], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (px->fd_out == -1)
 	{
-		close(pipex->fd_in);
-		ft_close_pipe(pipex);
-		ft_double_free(pipex->path);
+		close(px->fd_in);
+		ft_close_pipe(px);
+		ft_double_free(px->path);
 		ft_prterr(NO_OUTFILE, av[out_i], 1);
 	}
-	pipex->fd_read = pipex->fd_pipe[(pipex->i - 1) * 2];
-	pipex->fd_write = pipex->fd_out;
-	dup2(pipex->fd_read, STDIN_FILENO);
-	dup2(pipex->fd_write, STDOUT_FILENO);
-	close(pipex->fd_out);
+	px->fd_read = px->fd_pipe[(px->i - 1) * 2];
+	px->fd_write = px->fd_out;
+	dup2(px->fd_read, STDIN_FILENO);
+	dup2(px->fd_write, STDOUT_FILENO);
+	close(px->fd_out);
 }

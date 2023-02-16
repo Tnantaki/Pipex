@@ -12,26 +12,26 @@
 
 #include "../includes/pipex_bonus.h"
 
-void	ft_check_arg(int ac, char **av, t_pipe *pipex)
+void	ft_check_arg(int ac, char **av, t_pipe *px)
 {
-	pipex->here_doc = 0;
+	px->here_doc = 0;
 	if (ft_strncmp(av[1], "here_doc", 8) == 0 && ft_strlen(av[1]) == 8)
 	{
 		if (ac < 6)
 			ft_prterr(ARG_ERR, NULL, 1);
 		else
-			pipex->here_doc = 1;
+			px->here_doc = 1;
 	}
 	else
 	{
 		if (ac < 5)
 			ft_prterr(ARG_ERR, NULL, 1);
 	}
-	pipex->cmd_nb = ac - 3 - pipex->here_doc;
-	pipex->pipe_nb = pipex->cmd_nb - 1;
+	px->cmd_nb = ac - 3 - px->here_doc;
+	px->pipe_nb = px->cmd_nb - 1;
 }
 
-void	ft_findpath(char **envp, t_pipe *pipex)
+void	ft_findpath(char **envp, t_pipe *px)
 {
 	char	*tmp;
 	int		i;
@@ -45,48 +45,58 @@ void	ft_findpath(char **envp, t_pipe *pipex)
 		i++;
 	}
 	tmp = ft_strtrim(envp[i], "PATH=");
-	pipex->path = ft_split(tmp, ':');
+	px->path = ft_split(tmp, ':');
 	if (tmp)
 		free(tmp);
 	i = 0;
-	while (pipex->path[i])
+	while (px->path[i])
 	{
-		pipex->path[i] = ft_strjoinfree(pipex->path[i], "/");
+		px->path[i] = ft_strjoinfree(px->path[i], "/");
 		i++;
 	}
 }
 
-void	ft_open_here_doc(char **av, t_pipe *pipex)
+static void	ft_create_here_doc(char **av, t_pipe *px)
 {
-	pipex->fd_tmp = open(HERE_DOC_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	if (pipex->fd_tmp == -1)
+	char	*tmp;
+	int		fd;
+	int		len;
+
+	fd = open(HERE_DOC_PATH, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (fd == -1)
 		ft_prterr(HERE_DOC, HERE_DOC_PATH, errno);
-	pipex->len_lim = ft_strlen(av[2]);
+	len = ft_strlen(av[2]);
 	while (1)
 	{
 		ft_putstr_fd("heredoc> ", STDOUT_FILENO);
-		pipex->str_tmp = get_next_line(STDIN_FILENO);
-		if (!(pipex->str_tmp))
-			ft_gnl_err(pipex);
-		if (ft_strncmp(av[2], pipex->str_tmp, pipex->len_lim) == 0
-			&& pipex->str_tmp[pipex->len_lim] == '\n')
+		tmp = get_next_line(STDIN_FILENO);
+		if (!(tmp))
+			ft_gnl_err(px);
+		if (ft_strncmp(av[2], tmp, len) == 0 && tmp[len] == '\n')
 			break ;
-		ft_putstr_fd(pipex->str_tmp, pipex->fd_tmp);
-		free (pipex->str_tmp);
+		ft_putstr_fd(tmp, fd);
+		free (tmp);
 	}
-	free (pipex->str_tmp);
-	close(pipex->fd_tmp);
-	pipex->fd_in = open(HERE_DOC_PATH, O_RDONLY);
-	if (pipex->fd_in == -1)
-	{
-		unlink(HERE_DOC_PATH);
-		ft_prterr(HERE_DOC, HERE_DOC_PATH, errno);
-	}
+	free (tmp);
+	close(fd);
 }
 
-void	ft_open_infile(char **av, t_pipe *pipex)
+void	ft_open_infile(char **av, t_pipe *px)
 {
-	pipex->fd_in = open(av[1], O_RDONLY);
-	if (pipex->fd_in == -1)
-		ft_prterr(NO_INFILE, av[1], 0);
+	if (px->here_doc)
+	{
+		ft_create_here_doc(av, px);
+		px->fd_in = open(HERE_DOC_PATH, O_RDONLY);
+		if (px->fd_in == -1)
+		{
+			unlink(HERE_DOC_PATH);
+			ft_prterr(HERE_DOC, HERE_DOC_PATH, errno);
+		}
+	}
+	else
+	{
+		px->fd_in = open(av[1], O_RDONLY);
+		if (px->fd_in == -1)
+			ft_prterr(NO_INFILE, av[1], 0);
+	}
 }
