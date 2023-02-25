@@ -6,7 +6,7 @@
 /*   By: tnantaki <tnantaki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 14:52:15 by tnantaki          #+#    #+#             */
-/*   Updated: 2023/02/04 16:14:25 by tnantaki         ###   ########.fr       */
+/*   Updated: 2023/02/25 23:16:01 by tnantaki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 void	ft_check_arg(int ac, char **av, t_pipe *px)
 {
 	px->here_doc = 0;
+	if (ac < 2)
+		ft_prterr(ARG_ERR, NULL, 1);
 	if (ft_strncmp(av[1], "here_doc", 8) == 0 && ft_strlen(av[1]) == 8)
 	{
 		if (ac < 6)
