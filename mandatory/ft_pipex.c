@@ -74,15 +74,35 @@ static void	ft_child2(char **path, char **av, int *fd_pipe, char **envp)
 	char	**cmd;
 	int		fd_out;
 
-	fd_out = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	fd_out = open(av[5], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fd_out == -1)
 	{
 		ft_double_free(path);
-		ft_prterr(NO_OUTFILE, av[4], 1);
+		ft_prterr(NO_OUTFILE, av[5], 1);
 	}
 	dup2(fd_pipe[0], STDIN_FILENO);
 	dup2(fd_out, STDOUT_FILENO);
 	close(fd_out);
+	close(fd_pipe[1]);
+	close(fd_pipe[0]);
+	cmd = ft_split(av[4], ' ');
+	fcmd = ft_fcmd(path, cmd, av[4]);
+	if (execve(fcmd, cmd, envp) == -1)
+	{
+		free(fcmd);
+		ft_double_free(cmd);
+		exit (errno);
+	}
+}
+
+static void	ft_child(char **path, char **av, int *fd_pipe, char **envp)
+{
+	char	*fcmd;
+	char	**cmd;
+
+	sleep(1);
+	dup2(fd_pipe[0], STDIN_FILENO);
+	dup2(fd_pipe[1], STDOUT_FILENO);
 	close(fd_pipe[1]);
 	close(fd_pipe[0]);
 	cmd = ft_split(av[3], ' ');
@@ -98,21 +118,15 @@ static void	ft_child2(char **path, char **av, int *fd_pipe, char **envp)
 static char	**ft_findpath(char **envp)
 {
 	char	**path;
-	char	*tmp;
 	int		i;
 
-	i = 0;
-	while (envp[i])
+	while (*envp)
 	{
-		if (envp[i][0] == 'P' && envp[i][1] == 'A'
-		&& envp[i][2] == 'T' && envp[i][3] == 'H')
+		if (!ft_strncmp(*envp, "PATH=", 5))
 			break ;
-		i++;
+		envp++;
 	}
-	tmp = ft_strtrim(envp[i], "PATH=");
-	path = ft_split(tmp, ':');
-	if (tmp)
-		free(tmp);
+	path = ft_split(*envp + 5, ':');
 	i = 0;
 	while (path[i])
 	{
@@ -126,8 +140,9 @@ int	main(int ac, char **av, char **envp)
 {
 	t_pipe	px;
 
-	if (ac != 5)
-		ft_prterr(ARG_ERR, NULL, 1);
+	(void)ac;
+	// if (ac != 5)
+	// 	ft_prterr(ARG_ERR, NULL, 1);
 	px.path = ft_findpath(envp);
 	if (pipe(px.fd_pipe) == -1)
 		ft_prterr(PIPE_ERR, NULL, errno);
@@ -136,15 +151,24 @@ int	main(int ac, char **av, char **envp)
 		ft_prterr(FORK_ERR, NULL, errno);
 	if (px.pid1 == 0)
 		ft_child1(px.path, av, px.fd_pipe, envp);
+	//Test 3pipe
+	int pid = fork();
+	if (pid == -1)
+		ft_prterr(FORK_ERR, NULL, errno);
+	if (pid == 0)
+		ft_child(px.path, av, px.fd_pipe, envp);
+	//Test 3pipe
 	px.pid2 = fork();
 	if (px.pid2 == -1)
 		ft_prterr(FORK_ERR, NULL, errno);
 	if (px.pid2 == 0)
 		ft_child2(px.path, av, px.fd_pipe, envp);
+	printf("Satu99\n");
 	close(px.fd_pipe[0]);
 	close(px.fd_pipe[1]);
 	ft_double_free(px.path);
 	waitpid(px.pid1, NULL, 0);
+	waitpid(pid, NULL, 0);//Test 3pipe
 	waitpid(px.pid2, &px.status, 0);
 	return (WEXITSTATUS(px.status));
 }

@@ -35,21 +35,15 @@ void	ft_check_arg(int ac, char **av, t_pipe *px)
 
 void	ft_findpath(char **envp, t_pipe *px)
 {
-	char	*tmp;
 	int		i;
 
-	i = 0;
-	while (envp[i])
+	while (*envp)
 	{
-		if (envp[i][0] == 'P' && envp[i][1] == 'A'
-		&& envp[i][2] == 'T' && envp[i][3] == 'H')
+		if (!ft_strncmp(*envp, "PATH=", 5))
 			break ;
-		i++;
+		envp++;
 	}
-	tmp = ft_strtrim(envp[i], "PATH=");
-	px->path = ft_split(tmp, ':');
-	if (tmp)
-		free(tmp);
+	px->path = ft_split(*envp + 5, ':');
 	i = 0;
 	while (px->path[i])
 	{

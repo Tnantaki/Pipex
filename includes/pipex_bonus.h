@@ -36,7 +36,7 @@ typedef struct s_pipe
 	char	**path;
 	char	**cmd;
 	char	*fcmd;
-	int		*fd_pipe;
+	int		fd_pipe[2];
 	int		*pid;
 	int		here_doc;
 	int		cmd_nb;
